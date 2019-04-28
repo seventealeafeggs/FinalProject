@@ -26,3 +26,8 @@
 
 ## "如何說服user某些變項"是重要的
 ## *身分類別是重要的（e.g.教育程度、類別）
+
+* 參考網站
+ * https://rstudio.github.io/leaflet/shiny.html
+ * https://www.r-bloggers.com/4-tricks-for-working-with-r-leaflet-and-shiny/
+ * https://github.com/rstudio/shiny-examples/tree/master/063-superzip-example
