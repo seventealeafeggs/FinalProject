@@ -31,3 +31,4 @@
  * https://rstudio.github.io/leaflet/shiny.html
  * https://www.r-bloggers.com/4-tricks-for-working-with-r-leaflet-and-shiny/
  * https://github.com/rstudio/shiny-examples/tree/master/063-superzip-example
+ * leaflet官網教學:https://leafletjs.com/examples.html
