@@ -50,5 +50,9 @@
 * 中文
   * R 語言資料互動視覺化-Leaflet、Shiny: https://reurl.cc/Ymlm4
   * GTW:  https://blog.gtwang.org/r/r-leaflet-interactive-map-package-tutorial/
-
+## leaflet研究進度：
+* 目前已知leaflet運作原則：
+  * 將資料整理成以下形式即可放入leaflet()裡面，進行資料顯示，圖片如下：
 ![Alt text](https://i.imgur.com/CVNOMAe.png)
+  * 範例網站：https://rstudio.github.io/leaflet/shiny.html
+  
