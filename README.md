@@ -50,6 +50,7 @@
   * leaflet官方教學: https://leafletjs.com/examples.html
   * leaflet面量圖: https://leafletjs.com/examples/choropleth/
   * Shiny Theme: https://rstudio.github.io/shinythemes/
+  * CHOROPLETH MAP WITH LEAFLET:https://www.r-graph-gallery.com/183-choropleth-map-with-leaflet/
 * 中文
   * R 語言資料互動視覺化-Leaflet、Shiny: https://reurl.cc/Ymlm4
   * GTW:  https://blog.gtwang.org/r/r-leaflet-interactive-map-package-tutorial/
