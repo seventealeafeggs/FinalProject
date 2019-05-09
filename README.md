@@ -34,6 +34,9 @@
   * 只放入人口結構（可能只有五個變項）
   * 先運算好再讓User點選，不要即時運算
   * 設置lower bound建造C5取3的規則，最少需要選3項
+  * Method:
+    * Hierarchical Clustering: hclust()
+    * Partitional Clustering:  kmeans()
 
 ## "如何說服user某些變項"是重要的
 * 設置Defult，在一開始就先點選某些選項
