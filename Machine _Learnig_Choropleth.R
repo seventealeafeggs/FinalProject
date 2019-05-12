@@ -52,3 +52,5 @@ m<-leaflet(data) %>%
 m %>% addLegend(pal = wardpal, values = ~ml1, opacity = 0.7, title = NULL,
                 position = "bottomright")
 
+
+
