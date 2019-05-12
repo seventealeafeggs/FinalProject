@@ -2,7 +2,8 @@ getwd()
 library(sf)
 library(data.table)
 library(tidyverse)
-Sys.setlocale(category="LC_ALL",locale="zh_TW.UTF-8")
+
+#Sys.setlocale(category="LC_ALL",locale="zh_TW.UTF-8")
 #data
 town <- st_read(dsn="鄉鎮市區.shp",options="ENCODING=BIG-5",stringsAsFactors=FALSE,crs=3826)
 town <- st_transform(town,crs = 4326)
@@ -10,8 +11,7 @@ vote <- setDT(rio::import("perfectdata.csv"))
 s <- fread("perfectdata.csv")
 data <- dplyr::left_join(x=town,y=vote,by=c("COUNTY","TOWN"))
 
-County<-st_cast(st_union(x=summarise(group_by(.data=tvdata,COUNTY,COUNTY_ID)),
-                         by_feature = TRUE))
+
 data$city <- paste0(data$COUNTY,data$TOWN)
 
 #----
@@ -34,13 +34,6 @@ ui <- bootstrapPage(
 )
 
 server <- function(input, output, session) {
-  #labels <- reactive({
-  #  labels <- sprintf(
-  #   "<strong>%s</strong><br/>所得中位數:%g",
-  #   data$city, data[,input$variable]
-  #  ) %>% lapply(htmltools::HTML)
-  
-  #})
   # This reactive expression represents the palette function,
   # which changes as the user makes selections in UI.
   bins <- reactive({
@@ -74,7 +67,13 @@ server <- function(input, output, session) {
     if(input$variable=="大學畢業比例") return(data$大學畢業比例)
     if(input$variable=="KMT得票率") return(data$KMT得票率)
   })
+  labels <- reactive({
+     sprintf(
+     "<strong>%s</strong><br/>%s:%g",
+     data$city, input$variable ,var()
+    ) %>% lapply(htmltools::HTML)
   
+  })
   observe({
     pal <- colorpal()
     leafletProxy("map", data = data)%>% addPolygons(
@@ -90,7 +89,7 @@ server <- function(input, output, session) {
         dashArray = "",
         fillOpacity = 0.7,
         bringToFront = TRUE),
-      label = labels,
+      label = labels(),
       labelOptions = labelOptions(
         style = list("font-weight" = "normal", padding = "3px 8px"),
         textsize = "15px",
@@ -107,7 +106,7 @@ server <- function(input, output, session) {
     if (input$legend) {
       pal <- colorpal()
       proxy %>% addLegend(position = "bottomright",
-                          pal = pal, values = ~data[,input$variable]
+                          pal = pal, values = ~var(),title = input$variable
       )
     }
   })
