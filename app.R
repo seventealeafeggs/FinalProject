@@ -6,7 +6,7 @@ vilg <- st_read(dsn="村里.shp",options="ENCODING=BIG-5",stringsAsFactors=FALSE
 vilg <- st_transform(vilg,crs = 4326)
 pop <- setDT(rio::import("STAT_TP.xlsx"))
 pop <- load("STAT_TP.rdata")
-
+table(is.na(pop))
 
 dtp <- fread("雙北人口結構加機器學習資料V2.csv")
 
@@ -26,7 +26,7 @@ fwrite(dtp2,"雙北人口結構NEW.csv")
 ## success
 eat <- setDT(rio::import("餐館業（雙北）經緯度.xlsx"))
 eat <- na.omit(eat)
-dataTPP
+
 library(shiny)
 library(leaflet)
 library(RColorBrewer)
@@ -178,4 +178,4 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 
-
+table(is.na(dtp))
