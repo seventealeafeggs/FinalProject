@@ -285,3 +285,5 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 
 
+rsconnect::setAccountInfo(name='willwill', token='8B9B5583639A580B961092189E621755', secret='xZh6N2zvB3D6UFXxVa0E38iw3P/0gyIyjpr27lTN')
+rsconnect::deployApp('/Users/will/Desktop/7teaeggs')

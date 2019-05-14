@@ -1,0 +1,13 @@
+library(shiny)
+library(leaflet)
+library(RColorBrewer)
+library(sf)
+library(data.table)
+library(stringr)
+library(readr)
+library(foreign)
+library(readxl)
+library(haven)
+library(tidyverse)
+load("dataTP.rdata")
+dataTP <- dataTP

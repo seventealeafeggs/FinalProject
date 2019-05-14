@@ -1,28 +1,20 @@
+library(shiny)
+library(leaflet)
+library(RColorBrewer)
 library(sf)
 library(data.table)
+library(stringr)
+library(readr)
+library(foreign)
+library(readxl)
+library(haven)
 library(tidyverse)
-Sys.setlocale(category="LC_ALL",locale="zh_TW.UTF-8")
-vilg <- st_read(dsn="村里.shp",options="ENCODING=BIG-5",stringsAsFactors=FALSE,crs=3826)
-vilg <- st_transform(vilg,crs = 4326)
-pop <- setDT(rio::import("STAT_TP.xlsx"))
-pop <- load("STAT_TP.rdata")
-table(is.na(pop))
-
-stp <- fread("雙北各產業機器學習.csv")
-
-## shiny
-
-vilgTP <- vilg[vilg$COUNTY=="臺北市"|vilg$COUNTY=="新北市",]
-dataTP <- dplyr::left_join(x=vilgTP,y=stp,by=c("COUNTY","TOWN","V_ID"))
-
+load("dataTP.rdata")
+dataTP <- dataTP
 ## V2
 ## shinyapp
 #----
 ## success
-
-library(shiny)
-library(leaflet)
-library(RColorBrewer)
 
 ui <- bootstrapPage(
   
@@ -55,6 +47,7 @@ ui <- bootstrapPage(
 )
 
 server <- function(input, output, session) {
+
   # This reactive expression represents the palette function,
   # which changes as the user makes selections in UI.
   colmar <- reactive({
@@ -223,4 +216,3 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
-
