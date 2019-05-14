@@ -8,24 +8,17 @@ pop <- setDT(rio::import("STAT_TP.xlsx"))
 pop <- load("STAT_TP.rdata")
 table(is.na(pop))
 
-dtp <- fread("雙北人口結構加機器學習資料V2.csv")
+stp <- fread("雙北各產業機器學習.csv")
 
-fwrite(dtp,"雙北人口結構加機器學習資料V2.csv")
 ## shiny
-dtp %>% str()
-dimnames(dtp)[[2]] <- c("COUNTY_ID","COUNTY","TOWN_ID","TOWN","V_ID","VILLAGE","人口總數","性別比","平均每戶人數","人口密度","老化指數","擁有大學以上學歷人口比例","已婚有偶人口之比例","世代_0到19歲人口比例","世代_20到39歲人口比例","世代_40到59歲人口比例","世代_60到79歲人口比例","世代_80歲以上人口比例","所得中位數","ml1","ml2","ml3","ml4","ml5","ml6","ml7","ml8","ml9","ml10","ml11","ml12","ml13","ml14","ml15","ml16","ml17","ml18","ml19","ml20","ml21","ml22","ml23","ml24")
-dtp$city <- paste0(dtp$COUNTY,dtp$TOWN,dtp$VILLAGE)
+
 vilgTP <- vilg[vilg$COUNTY=="臺北市"|vilg$COUNTY=="新北市",]
-dataTP <- dplyr::left_join(x=vilgTP,y=dtp,by=c("COUNTY","TOWN","V_ID"))
-dtp %>% str()
-dtp2 <- dtp[,c(1:19,44)]
-fwrite(dtp2,"雙北人口結構NEW.csv")
+dataTP <- dplyr::left_join(x=vilgTP,y=stp,by=c("COUNTY","TOWN","V_ID"))
+
 ## V2
 ## shinyapp
 #----
 ## success
-eat <- setDT(rio::import("餐館業（雙北）經緯度.xlsx"))
-eat <- na.omit(eat)
 
 library(shiny)
 library(leaflet)
@@ -54,11 +47,10 @@ ui <- bootstrapPage(
                 selectInput("cohort", "請選擇一個世代進行分析",
                             colnames(setDT(dataTP[,c(15,18:22)])[,1:6])
                 ),
-                selectInput("colors", "Color Scheme",
-                            rownames(subset(brewer.pal.info, category %in% c("seq", "div")))
+                selectInput("target", "想分析哪個產業呢？",
+                            colnames(setDT(dataTP[,c(24:26)])[,1:3])
                 ),
-                checkboxInput("legend", "Show legend", TRUE),
-                checkboxInput("circle", "餐館業分布", FALSE)
+                checkboxInput("legend", "Show legend", TRUE)
   )
 )
 
@@ -66,40 +58,103 @@ server <- function(input, output, session) {
   # This reactive expression represents the palette function,
   # which changes as the user makes selections in UI.
   colmar <- reactive({
-    if(input$marry=="No"&input$college=="No"&input$cohort=="老化指數") return(dataTP$ml1)
-    if(input$marry=="No"&input$college=="Yes"&input$cohort=="老化指數") return(dataTP$ml2)
-    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="老化指數") return(dataTP$ml3)
-    if(input$marry=="Yes"&input$college=="No"&input$cohort=="老化指數") return(dataTP$ml4)
+    if(input$marry=="No"&input$college=="No"&input$cohort=="老化指數"&input$target=="化妝品業家數") return(dataTP$化妝m1)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="老化指數"&input$target=="化妝品業家數") return(dataTP$化妝m2)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="老化指數"&input$target=="化妝品業家數") return(dataTP$化妝m3)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="老化指數"&input$target=="化妝品業家數") return(dataTP$化妝m4)
     
-    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_0到19歲人口比例") return(dataTP$ml5)
-    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_0到19歲人口比例") return(dataTP$ml6)
-    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_0到19歲人口比例") return(dataTP$ml7)
-    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_0到19歲人口比例") return(dataTP$ml8)
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_0到19歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m5)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_0到19歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m6)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_0到19歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m7)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_0到19歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m8)
     
-    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_20到39歲人口比例") return(dataTP$ml9)
-    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_20到39歲人口比例") return(dataTP$ml10)
-    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_20到39歲人口比例") return(dataTP$ml11)
-    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_20到39歲人口比例") return(dataTP$ml12)
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_20到39歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m9)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_20到39歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m10)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_20到39歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m11)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_20到39歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m12)
     
-    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_40到59歲人口比例") return(dataTP$ml13)
-    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_40到59歲人口比例") return(dataTP$ml14)
-    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_40到59歲人口比例") return(dataTP$ml15)
-    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_40到59歲人口比例") return(dataTP$ml16)
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_40到59歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m13)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_40到59歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m14)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_40到59歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m15)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_40到59歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m16)
     
-    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_60到79歲人口比例") return(dataTP$ml17)
-    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_60到79歲人口比例") return(dataTP$ml18)
-    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_60到79歲人口比例") return(dataTP$ml19)
-    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_60到79歲人口比例") return(dataTP$ml20)
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_60到79歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m17)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_60到79歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m18)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_60到79歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m19)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_60到79歲人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m20)
     
-    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_80歲以上人口比例") return(dataTP$ml21)
-    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_80歲以上人口比例") return(dataTP$ml22)
-    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_80歲以上人口比例") return(dataTP$ml23)
-    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_80歲以上人口比例") return(dataTP$ml24)
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_80歲以上人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m21)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_80歲以上人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m22)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_80歲以上人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m23)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_80歲以上人口比例"&input$target=="化妝品業家數") return(dataTP$化妝m24)
+    
+    #daily
+    if(input$marry=="No"&input$college=="No"&input$cohort=="老化指數"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m1)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="老化指數"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m2)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="老化指數"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m3)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="老化指數"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m4)
+    
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_0到19歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m5)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_0到19歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m6)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_0到19歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m7)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_0到19歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m8)
+    
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_20到39歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m9)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_20到39歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m10)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_20到39歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m11)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_20到39歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m12)
+    
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_40到59歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m13)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_40到59歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m14)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_40到59歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m15)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_40到59歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m16)
+    
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_60到79歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m17)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_60到79歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m18)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_60到79歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m19)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_60到79歲人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m20)
+    
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_80歲以上人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m21)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_80歲以上人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m22)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_80歲以上人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m23)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_80歲以上人口比例"&input$target=="日常用品業家數") return(dataTP$日常用品業家數m24)
+    
+    #res
+    if(input$marry=="No"&input$college=="No"&input$cohort=="老化指數"&input$target=="餐館業家數") return(dataTP$餐館業家數m1)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="老化指數"&input$target=="餐館業家數") return(dataTP$餐館業家數m2)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="老化指數"&input$target=="餐館業家數") return(dataTP$餐館業家數m3)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="老化指數"&input$target=="餐館業家數") return(dataTP$餐館業家數m4)
+    
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_0到19歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m5)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_0到19歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m6)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_0到19歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m7)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_0到19歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m8)
+    
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_20到39歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m9)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_20到39歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m10)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_20到39歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m11)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_20到39歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m12)
+    
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_40到59歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m13)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_40到59歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m14)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_40到59歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m15)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_40到59歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m16)
+    
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_60到79歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m17)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_60到79歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m18)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_60到79歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m19)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_60到79歲人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m20)
+    
+    if(input$marry=="No"&input$college=="No"&input$cohort=="世代_80歲以上人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m21)
+    if(input$marry=="No"&input$college=="Yes"&input$cohort=="世代_80歲以上人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m22)
+    if(input$marry=="Yes"&input$college=="Yes"&input$cohort=="世代_80歲以上人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m23)
+    if(input$marry=="Yes"&input$college=="No"&input$cohort=="世代_80歲以上人口比例"&input$target=="餐館業家數") return(dataTP$餐館業家數m24)
     
   })
   
   colorpal <- reactive({
-    colorFactor(input$colors, colmar())
+    bins <- c(Inf,10,7,5,3,1,-1,-3,-5,-7,-10,-Inf)
+    colorBin("PiYG",domain = colmar(), bins = bins)
     
   })
   
@@ -124,14 +179,14 @@ server <- function(input, output, session) {
   
   labels <- reactive({
     sprintf(
-      "<strong>%s</strong><br/>%s:%g<br/>%s:%g<br/>%s:%g<br/>%s:%g<br/>%s:%g",
-      dataTP$city,"人口總數", dataTP$人口總數, "性別比",dataTP$性別比,"所得中位數",dataTP$所得中位數,"已婚有偶人口之比例",dataTP$已婚有偶人口之比例,"擁有大學以上學歷人口比例",dataTP$擁有大學以上學歷人口比例
+      "<strong>%s</strong><br/>%s:%g<br/>%s:%g<br/>%s:%g<br/>%s:%g<br/>%s:%g<br/>%s:%g",
+      dataTP$city,"人口密度", dataTP$人口密度, "性別比",dataTP$性別比,"所得中位數",dataTP$所得中位數,"已婚有偶人口之比例",dataTP$已婚有偶人口之比例,"擁有大學以上學歷人口比例",dataTP$擁有大學以上學歷人口比例,"產業潛力",colmar()
     ) %>% lapply(htmltools::HTML)
     
   })
   observe({
     pal <- colorpal()
-    leafletProxy("map", data = dataTP)%>% addPolygons(
+    leafletProxy("map", data = dataTP)%>% clearShapes() %>% addPolygons(
       fillColor = ~pal(colmar()),
       weight = 2,
       opacity = 1,
@@ -165,17 +220,7 @@ server <- function(input, output, session) {
       )
     }
   })
-  observe({ 
-    proxy <- leafletProxy("map", data = eat)
-    
-    proxy %>% clearControls()
-    if (input$circle){
-      proxy %>% addCircles(~Response_X, ~Response_Y, radius=1.5, layerId=~id,
-                           stroke=FALSE, fillOpacity=0.4)
-    }
-  })
 }
 
 shinyApp(ui, server)
 
-table(is.na(dtp))
