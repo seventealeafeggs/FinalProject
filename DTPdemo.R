@@ -528,15 +528,15 @@ server <- function(input, output, session) {
       )
     }
   })
-  #observe({ 
-  #  proxy <- leafletProxy("map", data = eat)
- #   
-  #  proxy %>% clearControls()
-  #  if (input$circle){
-  #    proxy %>% addCircles(~Response_X, ~Response_Y, radius=1.5, layerId=~id,
-   #                stroke=FALSE, fillOpacity=0.4)
-  #  }
-  #})
+  observe({ 
+    proxy <- leafletProxy("map", data = eat)
+    
+    proxy %>% clearControls()
+    if (input$circle){
+      proxy %>% addCircles(~Response_X, ~Response_Y, radius=1.5, layerId=~id,
+                   stroke=FALSE, fillOpacity=0.4)
+    }
+  })
 }
 
 shinyApp(ui, server)

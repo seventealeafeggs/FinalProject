@@ -2,13 +2,15 @@ getwd()
 library(sf)
 library(data.table)
 library(tidyverse)
-Sys.setlocale(category="LC_ALL",locale="zh_TW.UTF-8")
+
+#Sys.setlocale(category="LC_ALL",locale="zh_TW.UTF-8")
 #data
 town <- st_read(dsn="鄉鎮市區.shp",options="ENCODING=BIG-5",stringsAsFactors=FALSE,crs=3826)
 town <- st_transform(town,crs = 4326)
 vote <- setDT(rio::import("perfectdata.csv"))
 s <- fread("perfectdata.csv")
 data <- dplyr::left_join(x=town,y=vote,by=c("COUNTY","TOWN"))
+
 
 data$city <- paste0(data$COUNTY,data$TOWN)
 
@@ -66,11 +68,11 @@ server <- function(input, output, session) {
     if(input$variable=="KMT得票率") return(data$KMT得票率)
   })
   labels <- reactive({
-     sprintf(
-     "<strong>%s</strong><br/>%s:%g",
-     data$city, input$variable ,var()
+    sprintf(
+      "<strong>%s</strong><br/>%s:%g",
+      data$city, input$variable ,var()
     ) %>% lapply(htmltools::HTML)
-  
+    
   })
   observe({
     pal <- colorpal()
