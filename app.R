@@ -17,8 +17,9 @@ dimnames(dtp)[[2]] <- c("COUNTY_ID","COUNTY","TOWN_ID","TOWN","V_ID","VILLAGE","
 dtp$city <- paste0(dtp$COUNTY,dtp$TOWN,dtp$VILLAGE)
 vilgTP <- vilg[vilg$COUNTY=="臺北市"|vilg$COUNTY=="新北市",]
 dataTP <- dplyr::left_join(x=vilgTP,y=dtp,by=c("COUNTY","TOWN","V_ID"))
-
-dtp2 <- dtp[]
+dtp %>% str()
+dtp2 <- dtp[,c(1:19,44)]
+fwrite(dtp2,"雙北人口結構NEW.csv")
 ## V2
 ## shinyapp
 #----
