@@ -9,8 +9,13 @@ library(foreign)
 library(readxl)
 library(haven)
 library(tidyverse)
-load("dataTP.rdata")
-dataTP <- dataTP
+vilg <- st_read(dsn="村里.shp",options="ENCODING=BIG-5",stringsAsFactors=FALSE,crs=3826)
+vilg <- st_transform(vilg,crs = 4326)
+vilgTP <- vilg[vilg$COUNTY=="臺北市"|vilg$COUNTY=="新北市",]
+stp <- setDT(rio::import("雙北各產業機器學習.csv"))
+dataTP <- dplyr::left_join(x=vilgTP,y=stp,by=c("COUNTY","TOWN","V_ID"))
+rent <- as.data.table(rio::import("不動產租賃.xlsx"))[,.(經度,緯度,單價元平方公尺)]
+
 ## V2
 ## shinyapp
 #----
@@ -31,10 +36,10 @@ ui <- bootstrapPage(
                 h2("Select Bar"),
                 
                 selectInput("marry", "是否加入「已婚有偶之比例」進行分析",
-                            c("Yes","No")
+                            c("No","Yes")
                 ),
                 selectInput("college", "是否加入「擁有大學以上學歷人口比例」進行分析",
-                            c("Yes","No")
+                            c("No","Yes")
                 ),
                 selectInput("cohort", "請選擇一個世代進行分析",
                             colnames(setDT(dataTP[,c(15,18:22)])[,1:6])
@@ -42,12 +47,14 @@ ui <- bootstrapPage(
                 selectInput("target", "想分析哪個產業呢？",
                             colnames(setDT(dataTP[,c(24:26)])[,1:3])
                 ),
-                checkboxInput("legend", "Show legend", TRUE)
+                checkboxInput("legend", "Show legend", TRUE),
+                plotOutput("histCentile", height = 200)
+                
   )
 )
 
 server <- function(input, output, session) {
-
+  
   # This reactive expression represents the palette function,
   # which changes as the user makes selections in UI.
   colmar <- reactive({
@@ -172,8 +179,8 @@ server <- function(input, output, session) {
   
   labels <- reactive({
     sprintf(
-      "<strong>%s</strong><br/>%s:%g<br/>%s:%g<br/>%s:%g<br/>%s:%g<br/>%s:%g<br/>%s:%g",
-      dataTP$city,"人口密度", dataTP$人口密度, "性別比",dataTP$性別比,"所得中位數",dataTP$所得中位數,"已婚有偶人口之比例",dataTP$已婚有偶人口之比例,"擁有大學以上學歷人口比例",dataTP$擁有大學以上學歷人口比例,"產業潛力",colmar()
+      "<strong>%s</strong><br/>%s:%g<br/>%s:%g<br/>%s:%g<br/>%s:%g<br/>%s:%g<br/>%s:%g<br/>%s:%g",
+      dataTP$city,"人口密度", dataTP$人口密度, "性別比",dataTP$性別比,"所得中位數",dataTP$所得中位數,"平均每戶人數",dataTP$平均每戶人數,"已婚有偶人口之比例",dataTP$已婚有偶人口之比例,"擁有大學以上學歷人口比例",dataTP$擁有大學以上學歷人口比例,"產業潛力",colmar()
     ) %>% lapply(htmltools::HTML)
     
   })
@@ -213,6 +220,20 @@ server <- function(input, output, session) {
       )
     }
   })
+  
+  output$histCentile <- renderPlot({
+    hist(colmar(),
+         breaks = 100,
+         main = "Entrepreneurial potential distribution",
+         xlab = "-Potential+",
+         xlim = range(colmar()),
+         col = '#00DD00',
+         border = 'white')
+  })
+  
 }
 
 shinyApp(ui, server)
+
+
+
